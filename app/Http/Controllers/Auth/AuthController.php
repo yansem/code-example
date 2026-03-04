@@ -144,8 +144,8 @@ class AuthController extends Controller
     )]
     public function logout(Request $request): \Illuminate\Http\Response
     {
-        $request->user()->currentAccessToken()->delete();
+        $request->user()?->currentAccessToken()?->delete();
 
-        return response()->noContent(ResponseAlias::HTTP_NO_CONTENT);
+        return response()->noContent();
     }
 }
