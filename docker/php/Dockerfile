@@ -33,17 +33,16 @@ RUN groupadd -g ${GID} appgroup \
     && mkdir -p /home/appuser/.composer \
     && chown -R appuser:appgroup /home/appuser
 
-# Меняем пользователя в php-fpm (самое важное!)
 RUN sed -i "s/user = www-data/user = appuser/g" /usr/local/etc/php-fpm.d/www.conf \
     && sed -i "s/group = www-data/group = appgroup/g" /usr/local/etc/php-fpm.d/www.conf
 
-WORKDIR /var/www/html
+WORKDIR /var/www
 
-COPY . /var/www/html
+COPY . /var/www
 
 # Меняем владельца всего проекта на appuser (чтобы artisan и composer работали без root)
-RUN chown -R appuser:appgroup /var/www/html \
-    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+RUN chown -R appuser:appgroup /var/www \
+    && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 
 COPY start.sh /usr/local/bin/start.sh
 RUN chmod +x /usr/local/bin/start.sh \
