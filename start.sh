@@ -16,6 +16,6 @@ echo "Generating application key..."
 php artisan key:generate
 
 echo "Running migrations..."
-php artisan migrate --force
+php artisan migrate:fresh --force
 
 exec "$@"
