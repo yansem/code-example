@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\VehicleController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -11,4 +12,8 @@ Route::prefix('auth')->group(function () {
         ->name('auth.login');
     Route::post('/logout', [AuthController::class, 'logout'])
         ->name('auth.logout'); //todo: questions
+});
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::apiResource('vehicles', VehicleController::class);
 });
