@@ -143,6 +143,34 @@
                     }
                 }
             }
+        },
+        "/api/vehicles": {
+            "post": {
+                "tags": [
+                    "Vehicle"
+                ],
+                "summary": "store vehicle",
+                "description": "store vehicle",
+                "operationId": "a88e0bca4193c91e713d0441659d199c",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/VehicleRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationErrorsResponse"
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -219,6 +247,80 @@
                     }
                 },
                 "type": "object"
+            },
+            "VehicleRequest": {
+                "required": [
+                    "license_plate",
+                    "is_default",
+                    "is_foreign",
+                    "vehicle_category_id"
+                ],
+                "properties": {
+                    "license_plate": {
+                        "description": "Номерной знак. Формат зависит от значения is_foreign",
+                        "type": "string",
+                        "pattern": "^[A-Z0-9\\s-]{5,12}$",
+                        "example": "А123ЕВ456",
+                        "maxLength": 12,
+                        "minLength": 5
+                    },
+                    "is_default": {
+                        "description": "Является ли это транспортное средство основным",
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "is_foreign": {
+                        "description": "Иностранный номер (true) или российский (false)",
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "vehicle_category_id": {
+                        "description": "ID категории ТС",
+                        "type": "integer",
+                        "example": 1
+                    }
+                },
+                "type": "object"
+            },
+            "ValidationErrors": {
+                "required": [
+                    "message",
+                    "errors"
+                ],
+                "properties": {
+                    "message": {
+                        "type": "string"
+                    },
+                    "errors": {
+                        "type": "object",
+                        "example": {
+                            "field": [
+                                "string"
+                            ]
+                        }
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "responses": {
+            "ValidationErrorsResponse": {
+                "description": "Validation errors",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/ValidationErrors"
+                        }
+                    }
+                }
+            }
+        },
+        "securitySchemes": {
+            "sanctum": {
+                "type": "apiKey",
+                "description": "Enter token in format (Bearer <token>)",
+                "name": "Authorization",
+                "in": "header"
             }
         }
     },
@@ -226,6 +328,15 @@
         {
             "name": "Auth",
             "description": "Auth"
+        },
+        {
+            "name": "Vehicle",
+            "description": "Vehicle"
+        }
+    ],
+    "security": [
+        {
+            "sanctum": []
         }
     ]
 }
