@@ -4,10 +4,28 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\VehicleRequest;
 use App\Models\Vehicle;
+use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class VehicleController extends Controller
 {
+    #[OA\Post(
+        path: "/api/vehicles",
+        description: "store vehicle",
+        summary: "store vehicle",
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(ref: "#/components/schemas/VehicleRequest")
+        ),
+        tags: ["Vehicle"],
+        responses: [
+            new OA\Response(
+                response: 201,
+                description: "Created"
+            ),
+            new OA\Response('#/components/responses/ValidationErrorsResponse', ResponseAlias::HTTP_UNPROCESSABLE_ENTITY),
+        ]
+    )]
     public function store(VehicleRequest $request): \Illuminate\Http\JsonResponse
     {
         $validated = $request->validated();

@@ -16,8 +16,8 @@ return new class extends Migration
             $table->string('license_plate');
             $table->boolean('is_default');
             $table->boolean('is_foreign');
-            $table->foreignId('vehicle_category_id');
-            $table->foreignId('user_id');
+            $table->foreignId('vehicle_category_id')->constrained();
+            $table->foreignId('user_id')->constrained();
             $table->timestamps();
         });
     }
