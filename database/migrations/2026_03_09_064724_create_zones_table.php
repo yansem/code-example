@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('zones', function (Blueprint $table) {
             $table->id();
             $table->string('title', 50);
-            $table->foreignId('region_id')->constrained();
+            $table->foreignId('district_id')->constrained();
             $table->foreignId('zone_category_id')->constrained();
             $table->timestamps();
         });

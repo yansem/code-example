@@ -17,33 +17,6 @@ return new class extends Migration {
             $table->string('title', 50);
             $table->timestamps();
         });
-
-        DB::table('vehicle_categories')->insert([
-            [
-                'category' => 'A',
-                'title' => 'Мотоцикл',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'category' => 'B',
-                'title' => 'Авто',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'category' => 'C',
-                'title' => 'Грузовик',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'category' => 'D',
-                'title' => 'Автобус',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]
-        ]);
     }
 
     /**
