@@ -11,13 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('vehicles', function (Blueprint $table) {
+        Schema::create('rates', function (Blueprint $table) {
             $table->id();
-            $table->string('license_plate');
-            $table->boolean('is_default')->default(false);
-            $table->boolean('is_foreign')->default(false);
+            $table->decimal('hourly_rate',10,2);
+            $table->decimal('minutely_rate',10,2);
+            $table->foreignId('zone_category_id')->constrained();
             $table->foreignId('vehicle_category_id')->constrained();
-            $table->foreignId('user_id')->constrained();
+            $table->unique([
+                'zone_category_id',
+                'vehicle_category_id'
+            ]);
             $table->timestamps();
         });
     }
@@ -27,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('vehicles');
+        Schema::dropIfExists('rates');
     }
 };
