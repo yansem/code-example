@@ -11,13 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('vehicles', function (Blueprint $table) {
+        Schema::create('parkings', function (Blueprint $table) {
             $table->id();
-            $table->string('license_plate');
-            $table->boolean('is_default')->default(false);
-            $table->boolean('is_foreign')->default(false);
-            $table->foreignId('vehicle_category_id')->constrained();
-            $table->foreignId('user_id')->constrained();
+            $table->timestamp('start');
+            $table->timestamp('end');
+            $table->boolean('renewal')->default(false);
+            $table->decimal('cost',10,2);
+            $table->foreignId('vehicle_id')->constrained();
+            $table->foreignId('zone_id')->constrained();
             $table->timestamps();
         });
     }
@@ -27,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('vehicles');
+        Schema::dropIfExists('parkings');
     }
 };
