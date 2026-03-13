@@ -144,6 +144,34 @@
                 }
             }
         },
+        "/api/parkings": {
+            "post": {
+                "tags": [
+                    "Parking"
+                ],
+                "summary": "store parking",
+                "description": "store parking",
+                "operationId": "e695faaf3f2d6470ac8c87f62b5221c1",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ParkingRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationErrorsResponse"
+                    }
+                }
+            }
+        },
         "/api/vehicles": {
             "post": {
                 "tags": [
@@ -227,7 +255,7 @@
                     "email": {
                         "type": "string",
                         "format": "email",
-                        "example": "ivan@example.com",
+                        "example": "ivan@mail.ru",
                         "maxLength": 255
                     },
                     "phone": {
@@ -244,6 +272,37 @@
                         "type": "string",
                         "format": "password",
                         "example": "Password123!"
+                    }
+                },
+                "type": "object"
+            },
+            "ParkingRequest": {
+                "required": [
+                    "duration",
+                    "is_auto_renewal",
+                    "vehicle_id",
+                    "zone_id"
+                ],
+                "properties": {
+                    "duration": {
+                        "description": "Длительность в минутах",
+                        "type": "integer",
+                        "example": "60"
+                    },
+                    "is_auto_renewal": {
+                        "description": "Продление существующей парковки",
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "vehicle_id": {
+                        "description": "ID транспортного средства",
+                        "type": "integer",
+                        "example": 12
+                    },
+                    "zone_id": {
+                        "description": "ID парковочной зоны",
+                        "type": "integer",
+                        "example": 5
                     }
                 },
                 "type": "object"
@@ -267,7 +326,7 @@
                     "is_default": {
                         "description": "Является ли это транспортное средство основным",
                         "type": "boolean",
-                        "example": true
+                        "example": false
                     },
                     "is_foreign": {
                         "description": "Иностранный номер (true) или российский (false)",
@@ -328,6 +387,10 @@
         {
             "name": "Auth",
             "description": "Auth"
+        },
+        {
+            "name": "Parking",
+            "description": "Parking"
         },
         {
             "name": "Vehicle",
