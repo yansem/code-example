@@ -22,7 +22,7 @@ class Vehicle extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function vehicle_category(): BelongsTo
+    public function vehicleCategory(): BelongsTo
     {
         return $this->belongsTo(VehicleCategory::class);
     }

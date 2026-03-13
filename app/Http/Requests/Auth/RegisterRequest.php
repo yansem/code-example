@@ -13,7 +13,7 @@ use OpenApi\Attributes as OA;
         new OA\Property(property: "name", type: "string", example: "Иван", maxLength: 255, minLength: 2),
         new OA\Property(property: "surname", type: "string", example: "Иванов", maxLength: 255, minLength: 2),
         new OA\Property(property: "patronymic", type: "string", example: "Иванович", maxLength: 255, minLength: 2),
-        new OA\Property(property: "email", type: "string", format: "email", example: "ivan@example.com", maxLength: 255),
+        new OA\Property(property: "email", type: "string", format: "email", example: "ivan@mail.ru", maxLength: 255),
         new OA\Property(property: "phone", type: "string", example: "+79991234567"),
         new OA\Property(property: "password", type: "string", format: "password", example: "Password123!", minLength: 8),
         new OA\Property(property: "password_confirmation", type: "string", format: "password", example: "Password123!"),
