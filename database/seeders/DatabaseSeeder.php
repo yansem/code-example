@@ -19,7 +19,7 @@ class DatabaseSeeder extends Seeder
             VehicleCategorySeeder::class,
             UserSeeder::class,
             VehicleSeeder::class,
-            DistinctSeeder::class,
+            DistrictSeeder::class,
             ZoneCategorySeeder::class,
             ZoneSeeder::class,
             RateSeeder::class,

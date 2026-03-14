@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('parkings', function (Blueprint $table) {
             $table->id();
-            $table->timestamp('start');
-            $table->timestamp('end');
-            $table->boolean('renewal')->default(false);
-            $table->decimal('cost',10,2);
+            $table->timestamp('start_at');
+            $table->timestamp('end_at');
+            $table->boolean('is_auto_renewal')->default(false);
+            $table->unsignedInteger('cost');
             $table->foreignId('vehicle_id')->constrained();
             $table->foreignId('zone_id')->constrained();
             $table->timestamps();

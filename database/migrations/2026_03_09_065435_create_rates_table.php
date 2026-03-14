@@ -13,8 +13,8 @@ return new class extends Migration {
     {
         Schema::create('rates', function (Blueprint $table) {
             $table->id();
-            $table->decimal('hourly_rate', 10, 2);
-            $table->decimal('minutely_rate', 10, 2);
+            $table->unsignedInteger('hourly_rate');
+            $table->unsignedInteger('minutely_rate');
             $table->foreignId('zone_category_id')->constrained();
             $table->foreignId('vehicle_category_id')->constrained();
             $table->unique([
