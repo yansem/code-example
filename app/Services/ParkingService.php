@@ -27,7 +27,8 @@ readonly class ParkingService
             'is_auto_renewal' => $data->isAutoRenewal,
             'cost' => $cost,
             'vehicle_id' => $data->vehicleId,
-            'zone_id' => $data->zoneId
+            'zone_id' => $data->zoneId,
+            'user_id' => $data->userId
         ]);
     }
 

@@ -19,6 +19,7 @@ return new class extends Migration
             $table->unsignedInteger('cost');
             $table->foreignId('vehicle_id')->constrained();
             $table->foreignId('zone_id')->constrained();
+            $table->foreignId('user_id')->constrained();
             $table->timestamps();
         });
     }

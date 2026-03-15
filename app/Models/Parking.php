@@ -13,5 +13,6 @@ class Parking extends Model
         'cost',
         'vehicle_id',
         'zone_id',
+        'user_id',
     ];
 }
