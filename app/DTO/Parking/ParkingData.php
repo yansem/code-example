@@ -2,12 +2,12 @@
 
 namespace App\DTO\Parking;
 
-final readonly class CreateParkingData
+final readonly class ParkingData
 {
     public function __construct(
         public int $zoneId,
         public int $vehicleId,
         public int $duration,
-        public bool $isAutoRenewal
+        public ?bool $isAutoRenewal = null
     ) {}
 }

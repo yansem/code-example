@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\DTO\Parking\CreateParkingData;
+use App\DTO\Parking\CalculateParkingData;
+use App\DTO\Parking\ParkingData;
+use App\Http\Requests\ParkingCalculateRequest;
 use App\Http\Requests\ParkingRequest;
 use App\Services\ParkingService;
 use Illuminate\Http\JsonResponse;
@@ -32,7 +34,7 @@ class ParkingController extends Controller
     {
         $data = $request->validated();
 
-        $parkingService->store(new CreateParkingData(
+        $parkingService->store(new ParkingData(
             zoneId: $data['zone_id'],
             vehicleId: $data['vehicle_id'],
             duration: $data['duration'],
@@ -40,5 +42,50 @@ class ParkingController extends Controller
         ));
 
         return response()->json(status: ResponseAlias::HTTP_CREATED);
+    }
+
+    #[OA\Post(
+        path: "/api/parkings/calculate",
+        description: "Расчёт стоимости парковки",
+        summary: "Расчёт стоимости парковки",
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(ref: "#/components/schemas/ParkingCalculateRequest")
+        ),
+        tags: ["Parking"],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Успешный расчёт стоимости",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(
+                            property: "cost",
+                            description: "Стоимость парковки в копейках",
+                            type: "integer",
+                            format: "int64",
+                            example: 1250
+                        )
+                    ],
+                    type: "object"
+                )
+            ),
+            new OA\Response(
+                ref: '#/components/responses/ValidationErrorsResponse',
+                response: ResponseAlias::HTTP_UNPROCESSABLE_ENTITY
+            ),
+        ]
+    )]
+    public function calculate(ParkingCalculateRequest $request, ParkingService $parkingService): JsonResponse
+    {
+        $data = $request->validated();
+
+        $cost = $parkingService->calculate(new ParkingData(
+            zoneId: $data['zone_id'],
+            vehicleId: $data['vehicle_id'],
+            duration: $data['duration'],
+        ));
+
+        return response()->json(['cost' => $cost], status: ResponseAlias::HTTP_OK);
     }
 }

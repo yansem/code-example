@@ -3,9 +3,10 @@
 namespace App\Services;
 
 use App\Domain\Parking\ParkingCostCalculator;
+use App\Domain\Parking\ParkingPeriod;
 use App\Domain\Parking\ParkingRates;
 use App\Domain\Parking\ParkingTimeCalculator;
-use App\DTO\Parking\CreateParkingData;
+use App\DTO\Parking\ParkingData;
 use App\Models\Parking;
 use App\Models\Rate;
 
@@ -15,19 +16,14 @@ readonly class ParkingService
         private ParkingTimeCalculator $timeCalculator,
         private ParkingCostCalculator $costCalculator
     ) {}
-    public function store(CreateParkingData $data): void
+    public function store(ParkingData $data): void
     {
-        $startAt = now();
-        $endAt = $startAt->copy()->addMinutes($data->duration);
-
-        $paidTime = $this->timeCalculator->calculate($startAt, $endAt);
-        $rates = $this->getRates($data->zoneId, $data->vehicleId);
-
-        $cost = $this->costCalculator->calculate($rates, $paidTime);
+        $parkingPeriod = $this->computeParkingPeriod($data->duration);
+        $cost = $this->calculate($data);
 
         Parking::query()->create([
-            'start_at' => $startAt,
-            'end_at' => $endAt,
+            'start_at' => $parkingPeriod->startAt,
+            'end_at' => $parkingPeriod->endAt,
             'is_auto_renewal' => $data->isAutoRenewal,
             'cost' => $cost,
             'vehicle_id' => $data->vehicleId,
@@ -35,7 +31,7 @@ readonly class ParkingService
         ]);
     }
 
-    public function getRates(int $zoneId, int $vehicleId): ParkingRates
+    private function getRates(int $zoneId, int $vehicleId): ParkingRates
     {
         $rate = Rate::query()
             ->join('zones', 'zones.zone_category_id', '=', 'rates.zone_category_id')
@@ -48,5 +44,22 @@ readonly class ParkingService
         $minutelyRate = $rate->minutely_rate;
 
         return new ParkingRates($hourlyRate, $minutelyRate);
+    }
+
+    private function computeParkingPeriod(int $duration): ParkingPeriod
+    {
+        $startAt = now();
+
+        return new ParkingPeriod($startAt, $startAt->copy()->addMinutes($duration));
+    }
+
+    public function calculate(ParkingData $data): int
+    {
+        $parkingPeriod = $this->computeParkingPeriod($data->duration);
+
+        $paidTime = $this->timeCalculator->calculate($parkingPeriod->startAt, $parkingPeriod->endAt);
+        $rates = $this->getRates($data->zoneId, $data->vehicleId);
+
+        return $this->costCalculator->calculate($rates, $paidTime);
     }
 }

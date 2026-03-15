@@ -172,6 +172,49 @@
                 }
             }
         },
+        "/api/parkings/calculate": {
+            "post": {
+                "tags": [
+                    "Parking"
+                ],
+                "summary": "Расчёт стоимости парковки",
+                "description": "Расчёт стоимости парковки",
+                "operationId": "a1a4e6d4b8e61be755c0f2090064e955",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ParkingCalculateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Успешный расчёт стоимости",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "cost": {
+                                            "description": "Стоимость парковки в копейках",
+                                            "type": "integer",
+                                            "format": "int64",
+                                            "example": 1250
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationErrorsResponse"
+                    }
+                }
+            }
+        },
         "/api/vehicles": {
             "post": {
                 "tags": [
@@ -276,37 +319,6 @@
                 },
                 "type": "object"
             },
-            "ParkingRequest": {
-                "required": [
-                    "duration",
-                    "is_auto_renewal",
-                    "vehicle_id",
-                    "zone_id"
-                ],
-                "properties": {
-                    "duration": {
-                        "description": "Длительность в минутах",
-                        "type": "integer",
-                        "example": "60"
-                    },
-                    "is_auto_renewal": {
-                        "description": "Продление существующей парковки",
-                        "type": "boolean",
-                        "example": false
-                    },
-                    "vehicle_id": {
-                        "description": "ID транспортного средства",
-                        "type": "integer",
-                        "example": 12
-                    },
-                    "zone_id": {
-                        "description": "ID парковочной зоны",
-                        "type": "integer",
-                        "example": 5
-                    }
-                },
-                "type": "object"
-            },
             "VehicleRequest": {
                 "required": [
                     "license_plate",
@@ -357,6 +369,62 @@
                                 "string"
                             ]
                         }
+                    }
+                },
+                "type": "object"
+            },
+            "ParkingCalculateRequest": {
+                "required": [
+                    "duration",
+                    "vehicle_id",
+                    "zone_id"
+                ],
+                "properties": {
+                    "duration": {
+                        "description": "Длительность в минутах",
+                        "type": "integer",
+                        "example": "60"
+                    },
+                    "vehicle_id": {
+                        "description": "ID транспортного средства",
+                        "type": "integer",
+                        "example": 12
+                    },
+                    "zone_id": {
+                        "description": "ID парковочной зоны",
+                        "type": "integer",
+                        "example": 5
+                    }
+                },
+                "type": "object"
+            },
+            "ParkingRequest": {
+                "required": [
+                    "duration",
+                    "is_auto_renewal",
+                    "vehicle_id",
+                    "zone_id"
+                ],
+                "properties": {
+                    "duration": {
+                        "description": "Длительность в минутах",
+                        "type": "integer",
+                        "example": "60"
+                    },
+                    "is_auto_renewal": {
+                        "description": "Продление существующей парковки",
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "vehicle_id": {
+                        "description": "ID транспортного средства",
+                        "type": "integer",
+                        "example": 12
+                    },
+                    "zone_id": {
+                        "description": "ID парковочной зоны",
+                        "type": "integer",
+                        "example": 5
                     }
                 },
                 "type": "object"
