@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             ZoneCategorySeeder::class,
             ZoneSeeder::class,
             RateSeeder::class,
+            ParkingSessionStatusSeeder::class
         ]);
     }
 }

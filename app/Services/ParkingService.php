@@ -3,11 +3,13 @@
 namespace App\Services;
 
 use App\Domain\Parking\ParkingCostCalculator;
-use App\Domain\Parking\ParkingPeriod;
+use App\Domain\Parking\ParkingPeriodData;
 use App\Domain\Parking\ParkingRates;
 use App\Domain\Parking\ParkingTimeCalculator;
-use App\DTO\Parking\ParkingData;
-use App\Models\Parking;
+use App\DTO\Parking\ParkingSessionData;
+use App\Enums\ParkingSessionStatusEnum;
+use App\Models\ParkingPeriod;
+use App\Models\ParkingSession;
 use App\Models\Rate;
 
 readonly class ParkingService
@@ -16,18 +18,27 @@ readonly class ParkingService
         private ParkingTimeCalculator $timeCalculator,
         private ParkingCostCalculator $costCalculator
     ) {}
-    public function store(ParkingData $data): void
+    public function store(ParkingSessionData $data): void
     {
         $parkingPeriod = $this->computeParkingPeriod($data->duration);
         $cost = $this->calculate($data);
 
-        Parking::query()->create([
-            'start_at' => $parkingPeriod->startAt,
-            'end_at' => $parkingPeriod->endAt,
+        $parkingSession = ParkingSession::query()->create([
+//            'start_at' => $parkingPeriod->startAt,
+//            'end_at' => $parkingPeriod->endAt,
             'is_auto_renewal' => $data->isAutoRenewal,
-            'cost' => $cost,
+//            'cost' => $cost,
             'vehicle_id' => $data->vehicleId,
             'zone_id' => $data->zoneId,
+            'user_id' => $data->userId,
+            'parking_session_status_id' => ParkingSessionStatusEnum::ACTIVE->value
+        ]);
+
+        ParkingPeriod::query()->create([
+            'parking_session_id' => $parkingSession->id,
+            'start_at' => $parkingPeriod->startAt,
+            'end_at' => $parkingPeriod->endAt,
+            'cost' => $cost,
             'user_id' => $data->userId
         ]);
     }
@@ -47,14 +58,14 @@ readonly class ParkingService
         return new ParkingRates($hourlyRate, $minutelyRate);
     }
 
-    private function computeParkingPeriod(int $duration): ParkingPeriod
+    private function computeParkingPeriod(int $duration): ParkingPeriodData
     {
         $startAt = now();
 
-        return new ParkingPeriod($startAt, $startAt->copy()->addMinutes($duration));
+        return new ParkingPeriodData($startAt, $startAt->copy()->addMinutes($duration));
     }
 
-    public function calculate(ParkingData $data): int
+    public function calculate(ParkingSessionData $data): int
     {
         $parkingPeriod = $this->computeParkingPeriod($data->duration);
 

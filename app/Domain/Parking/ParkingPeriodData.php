@@ -4,7 +4,7 @@ namespace App\Domain\Parking;
 
 use Carbon\CarbonInterface;
 
-final readonly class ParkingPeriod
+final readonly class ParkingPeriodData
 {
     public function __construct(
         public CarbonInterface $startAt,

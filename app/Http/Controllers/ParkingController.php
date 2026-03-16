@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\DTO\Parking\CalculateParkingData;
-use App\DTO\Parking\ParkingData;
-use App\Http\Requests\ParkingCalculateRequest;
-use App\Http\Requests\ParkingRequest;
+use App\DTO\Parking\ParkingSessionData;
+use App\Http\Requests\ParkingSessionCalculateRequest;
+use App\Http\Requests\ParkingSessionRequest;
 use App\Services\ParkingService;
 use Illuminate\Http\JsonResponse;
 use OpenApi\Attributes as OA;
@@ -19,9 +18,9 @@ class ParkingController extends Controller
         summary: "store parking",
         requestBody: new OA\RequestBody(
             required: true,
-            content: new OA\JsonContent(ref: "#/components/schemas/ParkingRequest")
+            content: new OA\JsonContent(ref: "#/components/schemas/ParkingSessionRequest")
         ),
-        tags: ["Parking"],
+        tags: ["ParkingSession"],
         responses: [
             new OA\Response(
                 response: 201,
@@ -30,11 +29,11 @@ class ParkingController extends Controller
             new OA\Response('#/components/responses/ValidationErrorsResponse', ResponseAlias::HTTP_UNPROCESSABLE_ENTITY),
         ]
     )]
-    public function store(ParkingRequest $request, ParkingService $parkingService): JsonResponse
+    public function store(ParkingSessionRequest $request, ParkingService $parkingService): JsonResponse
     {
         $data = $request->validated();
 
-        $parkingService->store(new ParkingData(
+        $parkingService->store(new ParkingSessionData(
             zoneId: $data['zone_id'],
             vehicleId: $data['vehicle_id'],
             userId: auth()->user()->id,
@@ -51,9 +50,9 @@ class ParkingController extends Controller
         summary: "Расчёт стоимости парковки",
         requestBody: new OA\RequestBody(
             required: true,
-            content: new OA\JsonContent(ref: "#/components/schemas/ParkingCalculateRequest")
+            content: new OA\JsonContent(ref: "#/components/schemas/ParkingSessionCalculateRequest")
         ),
-        tags: ["Parking"],
+        tags: ["ParkingSession"],
         responses: [
             new OA\Response(
                 response: 200,
@@ -77,11 +76,11 @@ class ParkingController extends Controller
             ),
         ]
     )]
-    public function calculate(ParkingCalculateRequest $request, ParkingService $parkingService): JsonResponse
+    public function calculate(ParkingSessionCalculateRequest $request, ParkingService $parkingService): JsonResponse
     {
         $data = $request->validated();
 
-        $cost = $parkingService->calculate(new ParkingData(
+        $cost = $parkingService->calculate(new ParkingSessionData(
             zoneId: $data['zone_id'],
             vehicleId: $data['vehicle_id'],
             duration: $data['duration'],

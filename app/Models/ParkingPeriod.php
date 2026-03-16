@@ -4,15 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Parking extends Model
+class ParkingPeriod extends Model
 {
     protected $fillable = [
         'start_at',
         'end_at',
-        'is_auto_renewal',
         'cost',
-        'vehicle_id',
-        'zone_id',
+        'parking_session_id',
         'user_id',
     ];
 }

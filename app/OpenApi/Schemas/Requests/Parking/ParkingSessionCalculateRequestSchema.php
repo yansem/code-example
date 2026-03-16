@@ -5,7 +5,7 @@ namespace App\OpenApi\Schemas\Requests\Parking;
 use OpenApi\Attributes as OA;
 
 #[OA\Schema(
-    schema: "ParkingCalculateRequest",
+    schema: "ParkingSessionCalculateRequest",
     required: ["duration", "vehicle_id", "zone_id"],
     properties: [
         new OA\Property(
@@ -31,7 +31,7 @@ use OpenApi\Attributes as OA;
     ],
     type: "object"
 )]
-class ParkingCalculateRequestSchema
+class ParkingSessionCalculateRequestSchema
 {
 
 }

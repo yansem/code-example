@@ -2,7 +2,7 @@
 
 namespace App\DTO\Parking;
 
-final readonly class ParkingData
+final readonly class ParkingSessionData
 {
     public function __construct(
         public int $zoneId,
