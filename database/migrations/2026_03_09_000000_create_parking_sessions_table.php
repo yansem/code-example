@@ -14,10 +14,12 @@ return new class extends Migration
         Schema::create('parking_sessions', function (Blueprint $table) {
             $table->id();
             $table->boolean('is_auto_renewal')->default(false);
+            $table->unsignedBigInteger('current_parking_period_id')->nullable();
+            $table->timestamp('expires_at')->nullable()->index();
             $table->foreignId('vehicle_id')->constrained();
             $table->foreignId('zone_id')->constrained();
             $table->foreignId('user_id')->constrained();
-            $table->foreignId('parking_session_status')->constrained();
+            $table->foreignId('parking_session_status_id')->constrained();
             $table->timestamps();
         });
     }

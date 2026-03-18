@@ -36,8 +36,8 @@ class ParkingController extends Controller
         $parkingService->store(new ParkingSessionData(
             zoneId: $data['zone_id'],
             vehicleId: $data['vehicle_id'],
-            userId: auth()->user()->id,
             duration: $data['duration'],
+            userId: auth()->user()->id,
             isAutoRenewal: $data['is_auto_renewal']
         ));
 

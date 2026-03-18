@@ -12,5 +12,11 @@ class ParkingPeriod extends Model
         'cost',
         'parking_session_id',
         'user_id',
+        'source'
+    ];
+
+    protected $casts = [
+        'start_at' => 'datetime',
+        'end_at'   => 'datetime',
     ];
 }
