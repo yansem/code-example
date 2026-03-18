@@ -3,39 +3,52 @@
 namespace App\Services;
 
 use App\Domain\Parking\ParkingCostCalculator;
+use App\Domain\Parking\ParkingPeriodData;
 use App\Domain\Parking\ParkingRates;
 use App\Domain\Parking\ParkingTimeCalculator;
-use App\DTO\Parking\CreateParkingData;
-use App\Models\Parking;
+use App\DTO\Parking\ParkingSessionData;
+use App\Enums\ParkingSessionStatusEnum;
+use App\Models\ParkingPeriod;
+use App\Models\ParkingSession;
 use App\Models\Rate;
+use Illuminate\Support\Facades\DB;
 
 readonly class ParkingService
 {
     public function __construct(
         private ParkingTimeCalculator $timeCalculator,
         private ParkingCostCalculator $costCalculator
-    ) {}
-    public function store(CreateParkingData $data): void
+    )
     {
-        $startAt = now();
-        $endAt = $startAt->copy()->addMinutes($data->duration);
-
-        $paidTime = $this->timeCalculator->calculate($startAt, $endAt);
-        $rates = $this->getRates($data->zoneId, $data->vehicleId);
-
-        $cost = $this->costCalculator->calculate($rates, $paidTime);
-
-        Parking::query()->create([
-            'start_at' => $startAt,
-            'end_at' => $endAt,
-            'is_auto_renewal' => $data->isAutoRenewal,
-            'cost' => $cost,
-            'vehicle_id' => $data->vehicleId,
-            'zone_id' => $data->zoneId
-        ]);
     }
 
-    public function getRates(int $zoneId, int $vehicleId): ParkingRates
+    public function store(ParkingSessionData $data): void
+    {
+        $parkingPeriodData = $this->computeParkingPeriod($data->duration);
+        $cost = $this->calculate($data);
+
+        $parkingSession = ParkingSession::query()->create([
+            'is_auto_renewal' => $data->isAutoRenewal,
+            'vehicle_id' => $data->vehicleId,
+            'zone_id' => $data->zoneId,
+            'user_id' => $data->userId,
+            'parking_session_status_id' => ParkingSessionStatusEnum::ACTIVE->value,
+            'expires_at' => $parkingPeriodData->endAt
+        ]);
+
+        $parkingPeriod = ParkingPeriod::query()->create([
+            'parking_session_id' => $parkingSession->id,
+            'start_at' => $parkingPeriodData->startAt,
+            'end_at' => $parkingPeriodData->endAt,
+            'cost' => $cost,
+            'source' => 'manual',
+            'user_id' => $data->userId
+        ]);
+
+        $parkingSession->update(['current_parking_period_id' => $parkingPeriod->id]);
+    }
+
+    private function getRates(int $zoneId, int $vehicleId): ParkingRates
     {
         $rate = Rate::query()
             ->join('zones', 'zones.zone_category_id', '=', 'rates.zone_category_id')
@@ -48,5 +61,87 @@ readonly class ParkingService
         $minutelyRate = $rate->minutely_rate;
 
         return new ParkingRates($hourlyRate, $minutelyRate);
+    }
+
+    private function computeParkingPeriod(int $duration): ParkingPeriodData
+    {
+        $startAt = now()->startOfMinute();
+
+        return new ParkingPeriodData($startAt, $startAt->copy()->addMinutes($duration));
+    }
+
+    public function calculate(ParkingSessionData $data): int
+    {
+        $parkingPeriod = $this->computeParkingPeriod($data->duration);
+
+        $paidTime = $this->timeCalculator->calculate($parkingPeriod->startAt, $parkingPeriod->endAt);
+        $rates = $this->getRates($data->zoneId, $data->vehicleId);
+
+        return $this->costCalculator->calculate($rates, $paidTime);
+    }
+
+    public function renewParkingSessionById(int $sessionId): void
+    {
+        $session = ParkingSession::query()
+            ->where('id', $sessionId)
+            ->where('parking_session_status_id', ParkingSessionStatusEnum::ACTIVE->value)
+            ->where('is_auto_renewal', true)
+            ->with(['currentPeriod', 'user'])
+            ->first();
+
+        if (!$session) {
+            return;
+        }
+
+        if ($session->expires_at > now()->startOfMinute()) {
+            return;
+        }
+
+        $this->renewParkingSession($session);
+    }
+
+    private function renewParkingSession(ParkingSession $parkingSession): void
+    {
+        DB::transaction(function () use ($parkingSession) {
+
+            $session = ParkingSession::query()
+                ->where('id', $parkingSession->id)
+                ->lockForUpdate()
+                ->with(['currentPeriod', 'user'])
+                ->first();
+
+            if (!$session) {
+                return;
+            }
+
+            if ($session->expires_at > now()->startOfMinute()) {
+                return;
+            }
+
+            $lastPeriod = $session->currentPeriod;
+
+            $duration = $session->user->auto_renewal_duration;
+            $newEndAt = $lastPeriod->end_at->clone()->addMinutes($duration);
+
+            $cost = $this->calculate(new ParkingSessionData(
+                zoneId: $session->zone_id,
+                vehicleId: $session->vehicle_id,
+                duration: $duration
+            ));
+
+            $newPeriod = ParkingPeriod::create([
+                'start_at' => $lastPeriod->end_at,
+                'end_at' => $newEndAt,
+                'cost' => $cost,
+                'source' => 'auto',
+                'parking_session_id' => $session->id,
+                'user_id' => $session->user_id,
+            ]);
+
+            $session->update([
+                'current_parking_period_id' => $newPeriod->id,
+                'expires_at' => $newEndAt,
+            ]);
+        });
     }
 }

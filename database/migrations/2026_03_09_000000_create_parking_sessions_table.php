@@ -11,14 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('parkings', function (Blueprint $table) {
+        Schema::create('parking_sessions', function (Blueprint $table) {
             $table->id();
-            $table->timestamp('start_at');
-            $table->timestamp('end_at');
             $table->boolean('is_auto_renewal')->default(false);
-            $table->unsignedInteger('cost');
+            $table->unsignedBigInteger('current_parking_period_id')->nullable();
+            $table->timestamp('expires_at')->nullable()->index();
             $table->foreignId('vehicle_id')->constrained();
             $table->foreignId('zone_id')->constrained();
+            $table->foreignId('user_id')->constrained();
+            $table->foreignId('parking_session_status_id')->constrained();
             $table->timestamps();
         });
     }
@@ -28,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('parkings');
+        Schema::dropIfExists('parking_sessions');
     }
 };

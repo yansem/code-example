@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\OpenApi\Schemas\Requests\Parking;
 
-use Illuminate\Foundation\Http\FormRequest;
 use OpenApi\Attributes as OA;
 
 #[OA\Schema(
-    schema: "ParkingRequest",
+    schema: "ParkingSessionRequest",
     required: ["duration", "is_auto_renewal", "vehicle_id", "zone_id"],
     properties: [
         new OA\Property(
@@ -39,28 +38,7 @@ use OpenApi\Attributes as OA;
     ],
     type: "object"
 )]
-class ParkingRequest extends FormRequest
+class ParkingSessionRequestSchema
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
-    public function authorize(): bool
-    {
-        return true;
-    }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
-    public function rules(): array
-    {
-        return [
-            'duration' => ['required', 'integer', 'min:60'],
-            'is_auto_renewal' => ['required', 'boolean'],
-            'vehicle_id' => ['required', 'integer', 'exists:vehicles,id'],
-            'zone_id' => ['required', 'integer', 'exists:zones,id'],
-        ];
-    }
 }

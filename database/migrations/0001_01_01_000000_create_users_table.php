@@ -22,7 +22,7 @@ return new class extends Migration
             $table->timestamp('phone_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
-            $table->unsignedSmallInteger('auto_renewal_interval')->nullable()->comment('минуты');
+            $table->unsignedSmallInteger('auto_renewal_duration')->nullable()->comment('минуты');
             $table->boolean('agreed_to_pd_rules')->default(false);
             $table->boolean('agreed_to_pd_processing')->default(false);
             $table->timestamp('agreed_to_pd_at')->nullable();
