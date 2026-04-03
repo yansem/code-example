@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class ParkingSession extends Model
 {
     protected $fillable = [
+        'duration',
         'is_auto_renewal',
         'cost',
         'vehicle_id',

@@ -147,7 +147,7 @@
         "/api/parkings": {
             "post": {
                 "tags": [
-                    "Parking"
+                    "ParkingSession"
                 ],
                 "summary": "store parking",
                 "description": "store parking",
@@ -157,7 +157,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/ParkingRequest"
+                                "$ref": "#/components/schemas/ParkingSessionRequest"
                             }
                         }
                     }
@@ -175,7 +175,7 @@
         "/api/parkings/calculate": {
             "post": {
                 "tags": [
-                    "Parking"
+                    "ParkingSession"
                 ],
                 "summary": "Расчёт стоимости парковки",
                 "description": "Расчёт стоимости парковки",
@@ -185,7 +185,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/ParkingCalculateRequest"
+                                "$ref": "#/components/schemas/ParkingSessionCalculateRequest"
                             }
                         }
                     }
@@ -208,6 +208,36 @@
                                 }
                             }
                         }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationErrorsResponse"
+                    }
+                }
+            }
+        },
+        "/api/parkings/{id}/cancel": {
+            "post": {
+                "tags": [
+                    "ParkingSession"
+                ],
+                "summary": "Отмена парковки",
+                "description": "Отмена парковки",
+                "operationId": "a98a8ae596370ede25906a5b28dc7498",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "parking session id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": "1"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешная отмена парковки"
                     },
                     "422": {
                         "$ref": "#/components/responses/ValidationErrorsResponse"
@@ -373,7 +403,7 @@
                 },
                 "type": "object"
             },
-            "ParkingCalculateRequest": {
+            "ParkingSessionCalculateRequest": {
                 "required": [
                     "duration",
                     "vehicle_id",
@@ -398,7 +428,7 @@
                 },
                 "type": "object"
             },
-            "ParkingRequest": {
+            "ParkingSessionRequest": {
                 "required": [
                     "duration",
                     "is_auto_renewal",
@@ -457,8 +487,8 @@
             "description": "Auth"
         },
         {
-            "name": "Parking",
-            "description": "Parking"
+            "name": "ParkingSession",
+            "description": "ParkingSession"
         },
         {
             "name": "Vehicle",
