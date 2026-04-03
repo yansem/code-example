@@ -12,8 +12,8 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->group('api', [
-            \App\Http\Middleware\ForceJsonResponse::class, //для тестирования stateless-запросов через l5 swagger ui, т.к. без этого редирект на login
+        $middleware->api(prepend: [
+            \App\Http\Middleware\ForceJsonResponse::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

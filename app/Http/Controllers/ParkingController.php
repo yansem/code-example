@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\DTO\Parking\ParkingSessionData;
 use App\Http\Requests\ParkingSessionCalculateRequest;
 use App\Http\Requests\ParkingSessionRequest;
+use App\Models\ParkingSession;
 use App\Services\ParkingService;
 use Illuminate\Http\JsonResponse;
 use OpenApi\Attributes as OA;
@@ -87,5 +88,38 @@ class ParkingController extends Controller
         ));
 
         return response()->json(['cost' => $cost], status: ResponseAlias::HTTP_OK);
+    }
+
+    #[OA\Post(
+        path: "/api/parkings/{id}/cancel",
+        description: "Отмена парковки",
+        summary: "Отмена парковки",
+        tags: ["ParkingSession"],
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                description: 'parking session id',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'integer'),
+                example: '1',
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Успешная отмена парковки",
+            ),
+            new OA\Response(
+                ref: '#/components/responses/ValidationErrorsResponse',
+                response: ResponseAlias::HTTP_UNPROCESSABLE_ENTITY
+            ),
+        ]
+    )]
+    public function cancel(ParkingSession $parkingSession, ParkingService $parkingService)
+    {
+        $this->authorize('cancel', $parkingSession);
+
+        $parkingService->cancel($parkingSession);
     }
 }

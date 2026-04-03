@@ -16,6 +16,7 @@ return new class extends Migration
             $table->boolean('is_auto_renewal')->default(false);
             $table->unsignedBigInteger('current_parking_period_id')->nullable();
             $table->timestamp('expires_at')->nullable()->index();
+            $table->unsignedSmallInteger('duration')->nullable()->comment('минуты');
             $table->foreignId('vehicle_id')->constrained();
             $table->foreignId('zone_id')->constrained();
             $table->foreignId('user_id')->constrained();

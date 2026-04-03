@@ -27,7 +27,7 @@ class ParkingSessionStatusSeeder extends Seeder
                 'updated_at' => $now,
             ],
             [
-                'code' => 'STOPPED',
+                'code' => 'CANCELED',
                 'created_at' => $now,
                 'updated_at' => $now,
             ],

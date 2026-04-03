@@ -3,7 +3,6 @@
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\ParkingController;
 use App\Http\Controllers\VehicleController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('auth')->group(function () {
@@ -19,4 +18,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('vehicles', VehicleController::class);
     Route::post('/parkings', [ParkingController::class, 'store']);
     Route::post('/parkings/calculate', [ParkingController::class, 'calculate']);
+    Route::post('/parkings/{parkingSession}/cancel', [ParkingController::class, 'cancel']);
 });

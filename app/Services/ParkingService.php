@@ -25,9 +25,12 @@ readonly class ParkingService
     public function store(ParkingSessionData $data): void
     {
         $parkingPeriodData = $this->computeParkingPeriod($data->duration);
+
         $cost = $this->calculate($data);
+        $paidTime = $this->timeCalculator->calculate($parkingPeriodData->startAt, $parkingPeriodData->endAt);
 
         $parkingSession = ParkingSession::query()->create([
+            'duration' => $paidTime,
             'is_auto_renewal' => $data->isAutoRenewal,
             'vehicle_id' => $data->vehicleId,
             'zone_id' => $data->zoneId,
@@ -46,6 +49,17 @@ readonly class ParkingService
         ]);
 
         $parkingSession->update(['current_parking_period_id' => $parkingPeriod->id]);
+    }
+
+    public function cancel(ParkingSession $parkingSession)
+    {
+        $now = now()->startOfMinute();
+        $refundAmount = $this->calculate(new ParkingSessionData(
+            zoneId: $parkingSession->zone_id,
+            vehicleId: $parkingSession->vehicle_id,
+            duration: $now->diffInMinutes($parkingSession->expires_at)
+        ));
+        $parkingSession->update(['parking_session_status_id' => ParkingSessionStatusEnum::CANCELED->value]);
     }
 
     private function getRates(int $zoneId, int $vehicleId): ParkingRates
