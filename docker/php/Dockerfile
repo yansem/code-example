@@ -50,10 +50,13 @@ COPY start.sh /usr/local/bin/start.sh
 RUN chmod +x /usr/local/bin/start.sh \
     && chown appuser:appgroup /usr/local/bin/start.sh
 
+RUN pecl install xdebug \
+    && docker-php-ext-enable xdebug
+
+COPY docker/php/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
+
 USER appuser
 
 EXPOSE 9000
-
-ENTRYPOINT ["/usr/local/bin/start.sh"]
 
 CMD ["php-fpm"]
