@@ -81,7 +81,7 @@ class ParkingController extends Controller
     {
         $data = $request->validated();
 
-        $cost = $parkingService->calculate(new ParkingSessionData(
+        $cost = $parkingService->calculateCost(new ParkingSessionData(
             zoneId: $data['zone_id'],
             vehicleId: $data['vehicle_id'],
             duration: $data['duration'],
