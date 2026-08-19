@@ -26,9 +26,10 @@ readonly class ParkingService
     {
         $parkingPeriodData = $this->computeParkingPeriod($data->duration);
 
-        $cost = $this->calculate($data);
+        $cost = $this->calculateCost($data);
         $paidTime = $this->timeCalculator->calculate($parkingPeriodData->startAt, $parkingPeriodData->endAt);
 
+        //todo: transaction
         $parkingSession = ParkingSession::query()->create([
             'duration' => $paidTime,
             'is_auto_renewal' => $data->isAutoRenewal,
@@ -49,16 +50,25 @@ readonly class ParkingService
         ]);
 
         $parkingSession->update(['current_parking_period_id' => $parkingPeriod->id]);
+
+        auth()->user()->balance->decrement('balance', $cost);
+
     }
 
     public function cancel(ParkingSession $parkingSession)
     {
         $now = now()->startOfMinute();
-        $refundAmount = $this->calculate(new ParkingSessionData(
+
+        $refundAmount = $this->calculateCost(new ParkingSessionData(
             zoneId: $parkingSession->zone_id,
             vehicleId: $parkingSession->vehicle_id,
             duration: $now->diffInMinutes($parkingSession->expires_at)
         ));
+
+        dd($refundAmount);
+
+        auth()->user()->balance->increment('balance', $refundAmount);
+
         $parkingSession->update(['parking_session_status_id' => ParkingSessionStatusEnum::CANCELED->value]);
     }
 
@@ -84,7 +94,7 @@ readonly class ParkingService
         return new ParkingPeriodData($startAt, $startAt->copy()->addMinutes($duration));
     }
 
-    public function calculate(ParkingSessionData $data): int
+    public function calculateCost(ParkingSessionData $data): int
     {
         $parkingPeriod = $this->computeParkingPeriod($data->duration);
 
@@ -137,7 +147,7 @@ readonly class ParkingService
             $duration = $session->user->auto_renewal_duration;
             $newEndAt = $lastPeriod->end_at->clone()->addMinutes($duration);
 
-            $cost = $this->calculate(new ParkingSessionData(
+            $cost = $this->calculateCost(new ParkingSessionData(
                 zoneId: $session->zone_id,
                 vehicleId: $session->vehicle_id,
                 duration: $duration

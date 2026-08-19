@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
+use App\Models\UserBalance;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -51,5 +53,14 @@ class UserFactory extends Factory
         $fatherName = fake()->firstNameMale();
 
         return $fatherName . (str_ends_with($fatherName, 'й') ? 'евич' : 'ович');
+    }
+
+    public function configure(): static
+    {
+        return $this->afterCreating(function (User $user) {
+            UserBalance::factory()->create([
+                'user_id' => $user->id,
+            ]);
+        });
     }
 }

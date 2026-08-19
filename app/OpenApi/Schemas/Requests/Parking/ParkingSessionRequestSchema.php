@@ -12,7 +12,7 @@ use OpenApi\Attributes as OA;
             property: "duration",
             description: "Длительность в минутах",
             type: "integer",
-            example: "60"
+            example: 60
         ),
 
         new OA\Property(
@@ -26,14 +26,14 @@ use OpenApi\Attributes as OA;
             property: "vehicle_id",
             description: "ID транспортного средства",
             type: "integer",
-            example: 12
+            example: 1
         ),
 
         new OA\Property(
             property: "zone_id",
             description: "ID парковочной зоны",
             type: "integer",
-            example: 5
+            example: 1
         ),
     ],
     type: "object"

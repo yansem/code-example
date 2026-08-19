@@ -12,6 +12,8 @@ services:
       - ./:/var/www
     depends_on:
       - postgres
+    extra_hosts:
+      - "host.docker.internal:host-gateway" #для xdebug (под вопросом)
 
   nginx:
     image: nginx:alpine

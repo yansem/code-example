@@ -285,13 +285,13 @@
                     "email": {
                         "type": "string",
                         "format": "email",
-                        "example": "ivan@mail.ru",
+                        "example": "test@mail.ru",
                         "maxLength": 255
                     },
                     "password": {
                         "type": "string",
                         "format": "password",
-                        "example": "Password123!",
+                        "example": "password",
                         "minLength": 8
                     }
                 },
@@ -413,17 +413,17 @@
                     "duration": {
                         "description": "Длительность в минутах",
                         "type": "integer",
-                        "example": "60"
+                        "example": 60
                     },
                     "vehicle_id": {
                         "description": "ID транспортного средства",
                         "type": "integer",
-                        "example": 12
+                        "example": 1
                     },
                     "zone_id": {
                         "description": "ID парковочной зоны",
                         "type": "integer",
-                        "example": 5
+                        "example": 1
                     }
                 },
                 "type": "object"
@@ -439,7 +439,7 @@
                     "duration": {
                         "description": "Длительность в минутах",
                         "type": "integer",
-                        "example": "60"
+                        "example": 60
                     },
                     "is_auto_renewal": {
                         "description": "Продление существующей парковки",
@@ -449,12 +449,12 @@
                     "vehicle_id": {
                         "description": "ID транспортного средства",
                         "type": "integer",
-                        "example": 12
+                        "example": 1
                     },
                     "zone_id": {
                         "description": "ID парковочной зоны",
                         "type": "integer",
-                        "example": 5
+                        "example": 1
                     }
                 },
                 "type": "object"

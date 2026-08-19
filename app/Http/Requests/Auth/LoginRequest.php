@@ -10,8 +10,8 @@ use OpenApi\Attributes as OA;
     schema: "LoginRequest",
     required: ["email", "password"],
     properties: [
-        new OA\Property(property: "email", type: "string", format: "email", example: "ivan@mail.ru", maxLength: 255),
-        new OA\Property(property: "password", type: "string", format: "password", example: "Password123!", minLength: 8),
+        new OA\Property(property: "email", type: "string", format: "email", example: "test@mail.ru", maxLength: 255),
+        new OA\Property(property: "password", type: "string", format: "password", example: "password", minLength: 8),
     ]
 )]
 class LoginRequest extends FormRequest
