@@ -58,11 +58,17 @@ readonly class ParkingService
     public function cancel(ParkingSession $parkingSession)
     {
         $now = now()->startOfMinute();
+
         $refundAmount = $this->calculateCost(new ParkingSessionData(
             zoneId: $parkingSession->zone_id,
             vehicleId: $parkingSession->vehicle_id,
             duration: $now->diffInMinutes($parkingSession->expires_at)
         ));
+
+        dd($refundAmount);
+
+        auth()->user()->balance->increment('balance', $refundAmount);
+
         $parkingSession->update(['parking_session_status_id' => ParkingSessionStatusEnum::CANCELED->value]);
     }
 
